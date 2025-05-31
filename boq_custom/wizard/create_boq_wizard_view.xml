@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_create_boq_wizard_form" model="ir.ui.view">
+        <field name="name">create.boq.wizard.form</field>
+        <field name="model">create.boq.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Create BOQ">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="type"/>
+                            <field name="struct_name_selection" invisible="not type or type == 'archi'"/>
+                            <field name="archi_name_selection" invisible="not type or type == 'struct'"/>
+                        </group>
+                        <group>
+                            <field name="partner_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="BOQ Lines" >
+                            <field name="wizard_line_ids" nolabel="1" colspan="2" widget="ns_boq_section_and_note_one2many" class='one2many_width'>
+                                <tree editable="bottom" default_order="sequence asc" limit="1000">
+                                    <control>
+                                        <create name="add_project_stage" string="Add Project Stage" context="{'default_display_type': 'line_section','default_is_project_stage':True}"/>
+                                        <create name="add_parent_task" string="Add Parent Task" context="{'default_display_type': 'line_note','default_is_parent_task':True}"/>
+                                        <create name="add_sub_task" string="Add Sub Task" context="{'default_display_type': 'line_note','default_is_sub_task':True,'default_show_qty_computation':True}"/>
+                                        <create name="add_job_work" string="Add Job Work" context="{'default_display_type': 'line_note','default_is_job_work':True,'default_show_qty_computation':True}"/>
+                                        <create name="add_product" string="Add a Product"/>
+                                    </control>
+                                    <field name="display_type" column_invisible="1"/>
+                                    <field name="show_qty_computation" column_invisible="1"/>
+                                    <field name="wizard_id" column_invisible="1"/>
+                                    <field name="is_project_stage" column_invisible="1"/>
+                                    <field name="is_parent_task" column_invisible="1"/>
+                                    <field name="is_sub_task" column_invisible="1"/>
+                                    <field name="is_job_work" column_invisible="1"/>
+                                    <field name="boq_line_id" column_invisible="1"/>
+                                    <field name="sequence" widget='handle'/>
+                                    <field name="is_delete" nolabel='1'/>
+                                    <field name="name" invisible="not display_type"/>
+                                    <field name="product_id"/>
+                                    <field name="uom_id"/>
+                                    <field name="create_qty_computation" invisible="not show_qty_computation"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <footer>
+                    <button name="action_create_draft_boq" type="object" string="Create BOQ" class="btn-primary"/>
+                    <button name="action_remove_lines" type="object" string="Remove Lines" class="btn-danger"/>
+                    <button name="action_update_rec" type="object" string="Update Line" class="btn-primary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_create_boq_wizard" model="ir.actions.act_window">
+        <field name="name">Create BOQ</field>
+        <field name="res_model">create.boq.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_project_create_boq_wizard" 
+        name="Create BOQ"
+        parent="project_custom.main_menu_project_boq"
+        action="action_create_boq_wizard"
+        sequence="20"/>
+
+</odoo>

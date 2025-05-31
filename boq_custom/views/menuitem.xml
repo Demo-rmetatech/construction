@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem
+        id="boq_master_menu"
+        name="BOQ Master"
+        action="boq_master_action"
+        parent="project.menu_project_config"
+        sequence="9"/>
+
+       <!-- <menuitem id="menu_project_create_boq_wizard" 
+              name="Create BOQ"
+              action="action_create_boq_wizard"
+              parent="project_custom.main_menu_project_boq"
+              sequence="10"/> -->
+
+</odoo>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="boq_master_view_tree" model="ir.ui.view">
+        <field name="name">boq.master.view.tree</field>
+        <field name="model">boq.master</field>
+        <field name="arch" type="xml">
+            <tree string="BOQ Mater" js_class="upload_button_in_tree">
+                <field name="name" />
+                <field name="project_stage" />
+                <field name="sequence" />
+                <field name="boq_type"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="boq_master_view_form" model="ir.ui.view">
+        <field name="name">boq.master.view.form</field>
+        <field name="model">boq.master</field>
+        <field name="arch" type="xml">
+            <form string="BOQ Master">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" />
+                            <field name="boq_type"  required="1"/>
+                        </group>
+                        <group>
+                            <field name="project_stage" />
+                            <field name="sequence" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="boq_lines" string="BOQ Lines">
+                            <field name="boq_line_ids" nolabel="1" colspan="2">
+                                <tree editable="bottom" open_form_view="True">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="parent_task" />
+                                    <field name="sub_task" />
+                                    <field name="job_work" />
+                                    <field name="create_product_qty_computation" />
+                                    <field name="boq_master_id" column_invisible="True"/>
+                                    <field name="product_ids" column_invisible="True"/>
+                                    <field name="particular_ids" column_invisible="True"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="boq_master_search_view" model="ir.ui.view">
+        <field name="name">boq.master.search</field>
+        <field name="model">boq.master</field>
+        <field name="arch" type="xml">
+            <search>
+                <group expand="0" string="Group By">
+                    <filter name="group_by_name" string="Name" context="{'group_by': 'name'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+
+    <record id="boq_master_action" model="ir.actions.act_window">
+        <field name="name">BOQ Master</field>
+        <field name="res_model">boq.master</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="boq_master_search_view"/>
+        <field name="context">{'search_default_group_by_name': 1}</field>
+    </record>
+
+</odoo>

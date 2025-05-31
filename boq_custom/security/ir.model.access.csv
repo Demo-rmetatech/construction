@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_boq_master_user,access_boq_master_user,model_boq_master,base.group_user,1,1,1,1
+access_boq_master_line_user,access_boq__master_line_user,model_boq_master_line,base.group_user,1,1,1,1
+access_boq_line_product_user,access_boq_line_product_user,model_boq_line_product,base.group_user,1,1,1,1
+access_boq_csv_upload_wizard_user,access_boq_csv_upload_wizard_user,model_boq_csv_upload_wizard,base.group_user,1,1,1,1
+access_create_boq_wizard,access.create.boq.wizard,model_create_boq_wizard,base.group_user,1,1,1,1
+access_boq_master_wizard_line,access.boq.master.wizard.line,model_boq_master_wizard_line,base.group_user,1,1,1,1
+access_csv_missing_data_wizard,access.csv.missing.data.wizard,model_csv_missing_data_wizard,,1,0,1,1
+access_csv_missing_data_line,access.csv.missing.data.line,model_csv_missing_data_line,,1,0,1,1
+access_qty_particular_user,access_qty_particular_user,model_qty_particular,base.group_user,1,1,1,1

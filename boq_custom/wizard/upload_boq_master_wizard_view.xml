@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_boq_csv_upload_wizard_form" model="ir.ui.view">
+        <field name="name">boq.csv.upload.wizard.form</field>
+        <field name="model">boq.csv.upload.wizard</field>
+        <field name="arch" type="xml">
+            <form string="BOQ Upload" create="false">
+                <header>
+                    <button name="action_download_boq_sample_xlsx" type="object" string="Download Sample File" class="btn-primary"/>
+                </header>
+                <hr/>
+                <sheet>
+                    <group>
+                        <field name="file_name" invisible="1"/>
+                        <field name="csv_file" filename="file_name" widget="binary"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_import_csv" type="object" string="Upload" class="btn-success" />
+                    <button name="test_csv" type="object" string="Test File" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_boq_csv_upload_wizard" model="ir.actions.act_window">
+        <field name="name">BOQ CSV Upload</field>
+        <field name="res_model">boq.csv.upload.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

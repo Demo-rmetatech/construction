@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="boq_master_line_view_form" model="ir.ui.view">
+        <field name="name">boq.master.line.view.form</field>
+        <field name="model">boq.master.line</field>
+        <field name="arch" type="xml">
+            <form string="BOQ Lines">
+                <sheet>
+                   <notebook>
+                        <page name="Product_ids" string="Products">
+                            <field name="product_ids" nolable="1" colspan="2">
+                                <tree editable="bottom">
+                                    <field name="product_id" />
+                                    <field name="boq_line_id" column_invisible="1"/>
+                                    <field name="uom_id" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page name="particular_ids" string="Particulars">
+                            <field name="particular_ids" nolable="1" colspan="2">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="boq_line_id" column_invisible="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

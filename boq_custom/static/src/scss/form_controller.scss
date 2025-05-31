@@ -1,0 +1,14 @@
+.o_field_ns_boq_section_and_note_one2many ~ .row.o_group {
+    clear: both;
+    justify-content: space-between;
+}
+
+.one2many_width th[data-name=is_delete] {
+    width: 35px !important;
+}
+.one2many_width th[data-name=name] {
+    width: 218px !important;
+}
+.one2many_width th[data-name=create_qty_computation] {
+    width: 35px !important;
+}
