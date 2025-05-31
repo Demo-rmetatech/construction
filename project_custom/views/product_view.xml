@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="inherit_product_product_form_view" model="ir.ui.view">
+        <field name="name">inherit.product.product.form.view</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='default_code']" position="before">
+                <field name="boq_item"/>
+                <field name="boq_cost"  invisible="boq_item == 'no'"/>
+                <field name="boq_cost_tolerance_percent"  invisible="boq_item == 'no'"/>
+		        <field name="is_total_amount"/>
+                <field name="is_billing_product"/>
+                <field name="is_job_work" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="inherit_product_template_form_view" model="ir.ui.view">
+        <field name="name">inherit.product.template.form.view</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='categ_id']" position="before">
+                <field name="boq_item"/>
+                <field name="boq_cost" invisible="boq_item == 'no'"/>
+                <field name="boq_cost_tolerance_percent" invisible="boq_item == 'no'"/>
+		        <field name="is_total_amount"/>
+                <field name="is_billing_product"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

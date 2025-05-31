@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="qcboq_tree_view" model="ir.ui.view">
+        <field name="name">qcboq.tree.view</field>
+        <field name="model">quantity.computation</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="task_id" readonly="1"/>
+                <field name="sub_task_id" readonly="1"/>
+                <field name="job_id" readonly="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="qcboqcalc_tree_view" model="ir.ui.view">
+        <field name="name">qcboqcalc.tree.view</field>
+        <field name="model">qc.calculation</field>
+        <field name="arch" type="xml">
+            <tree create="False">
+                <field name="project_id" readonly="1"/>
+                <field name="task_id" readonly="1"/>
+                <field name="sub_task_id" readonly="1"/>
+                <field name="job_id" readonly="1"/>
+                <field name="total_volume" readonly="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="qcboq_form_view" model="ir.ui.view">
+        <field name="name">qcboq.form.view</field>
+        <field name="model">quantity.computation</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="task_id"  required="1"/>
+                            <field name="sub_task_id" domain="[('parent_id','=', task_id)]" required="1"/>
+                            <field name="job_id" domain="[('task_id','=', sub_task_id)]" required="1"/>
+<!--                            <field name="labour_cost_percent"/>-->
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Quantity Computation">
+                            <field name="qc_line_ids" widget="one2many">
+                                <tree editable="bottom">
+                                    <field name="qc_id" column_invisible="1"/>
+                                    <field name="product_id" domain="[('boq_item','=', 'yes'), ('detailed_type','!=', 'product')]"/>
+<!--                                    <field name="uom_id"/>-->
+<!--                                    <field name="length"/>-->
+<!--                                    <field name="width"/>-->
+<!--                                    <field name="height"/>-->
+<!--                                    <field name="quantity"/>-->
+<!--                                    <field name="volume" force_save="1"/>-->
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+<!--                    <group>-->
+<!--                        <group>-->
+<!--                            <field name="total_volume" force_save="1"/>-->
+<!--                        </group>-->
+<!--                    </group>-->
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="qcboqcalc_form_view" model="ir.ui.view">
+        <field name="name">qcboqcalc.form.view</field>
+        <field name="model">qc.calculation</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="project_id"/>
+                            <field name="task_id" readonly="1"/>
+                            <field name="sub_task_id" readonly="1"/>
+                            <field name="job_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="boq_id" readonly="1"/>
+                            <field name="product_ids" readonly="1" widget="many2many_tags" options="{'no_create_edit': True}"/>
+                            <field name="labour_cost_percent"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Quantity Computation">
+                            <field name="qc_line_ids" widget="one2many">
+                                <tree editable="bottom">
+                                    <field name="qc_id" column_invisible="1"/>
+                                    <field name="particular"/>
+                                    <!-- <field name="uom_id"/> -->
+                                    <field name="length"/>
+                                    <field name="width"/>
+                                    <field name="height"/>
+                                    <field name="quantity"/>
+                                    <field name="volume" force_save="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                    <group>
+                        <group class="oe_subtotal_footer oe_right">
+                            <field name="total_volume" force_save="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="qc_calculation_search_view" model="ir.ui.view">
+        <field name="name">qc.calculation.search</field>
+        <field name="model">qc.calculation</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="boq_id" invisible="1"/>  <!-- Replace with your actual field for searching -->
+                <field name="project_id" invisible="1"/>  <!-- Replace with your actual field for searching -->
+                
+                <!-- Group By Options -->
+                <group expand="0" string="Group By">
+                    <filter name="group_by_boq" string="BOQ" context="{'group_by': 'boq_id'}"/>
+                    <filter name="group_by_project" string="Project" context="{'group_by': 'project_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_quantity_computation" model="ir.actions.act_window">
+        <field name="name">Quantity Computation Master</field>
+        <field name="res_model">quantity.computation</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- <menuitem id="menu_quantity_computation" name="Quantity Computation Master"
+              parent="project.menu_project_config" sequence="100"
+              action="action_quantity_computation"/> -->
+
+    <record id="action_qc_calculation" model="ir.actions.act_window">
+        <field name="name">Project Quantity Computation</field>
+        <field name="res_model">qc.calculation</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_qc_calculation" name="Project Quantity Computation"
+              parent="project_custom.main_menu_project_boq" sequence="20"
+              action="action_qc_calculation"/>
+</odoo>

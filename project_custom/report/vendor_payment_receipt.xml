@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_payment_receipt_supplier_document">
+        <t t-call="web.external_layout">
+            <t t-set="o" t-value="o.with_context(lang=lang)"/>
+            <div class="page">
+                <h3><strong>Payment Voucher: <span t-field="o.name"/></strong></h3>
+                <div class="mb-4 mt-3">
+                    <div class="row">
+                        <div class="col-6" t-if="o.partner_type">
+                            <t t-if="o.partner_type == 'customer'">
+                                Customer:
+                            </t>
+                            <t t-if="o.partner_type == 'supplier'">
+                                Payment To:
+                            </t><span t-field="o.partner_id"
+                        t-options='{"widget": "contact", "fields": ["address", "name", "phone", "vat"], "no_marker": True, "phone_icons": True}'/>
+                        </div>
+                        <div class="col-6" style="padding-left:50px;">
+                            <div class="col-6" t-if="o.date">
+                            Payment Date: <span t-field="o.date"/>
+                        </div>
+
+                        <div class="col-6" t-if="o.payment_method_id">
+                            Payment Method: <span t-field="o.payment_method_id.name"/>
+                        </div>
+                            <div class="col-6" t-if="o.project_id">
+                            Project: <span t-field="o.project_id.name"/>
+                         </div>
+                        </div>
+                    </div>
+<!--                    <div class="row">-->
+<!--                        <div class="col-6" t-if="o.date">-->
+<!--                            Payment Date: <span t-field="o.date"/>-->
+<!--                        </div>-->
+
+<!--                        <div class="col-6" t-if="o.payment_method_id">-->
+<!--                            Payment Method: <span t-field="o.payment_method_id.name"/>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="row">-->
+<!--                        <div class="col-6" t-if="o.amount">-->
+<!--                            Payment Amount: <span t-field="o.amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>-->
+<!--                         </div>-->
+<!--                        <div class="col-6" t-if="o.ref">-->
+<!--                            Memo: <span t-field="o.ref"/>-->
+<!--                         </div>-->
+<!--                    </div>-->
+                </div>
+
+                <t t-set="partials" t-value="o.move_id._get_reconciled_invoices_partials()[0]"/>
+                <t t-set="invoices" t-value="{partial[2].move_id for partial in partials}"/>
+                <!-- Check if invoices include different currencies -->
+                <t t-foreach="invoices" t-as="inv">
+                    <t t-if="any(inv.currency_id != par[2].currency_id for par in inv._get_reconciled_invoices_partials()[0])" t-set="otherCurrency" t-value="True"/>
+                </t>
+
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th class="text-center"><span>Account/Item</span></th>
+                            <th class="text-center"><span>Description</span></th>
+                            <th class="text-center"><span>Debit</span></th>
+                            <!-- Add a column if there are different currencies -->
+                            <th t-if="otherCurrency" class="text-end"><span>Amount In Currency</span></th>
+                            <th class="text-center"><span>Credit</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+<!--                        <t t-foreach="o.line_ids" t-as="inv">-->
+                            <t t-foreach="o.line_ids" t-as="line">
+                            <!-- MOVE -->
+<!--                                <t t-if="inv.move_type != 'entry'">-->
+                                    <tr>
+                                        <td class="text-center"><span t-esc="line.get_account_name()"/></td>
+                                        <td class="text-center"><span t-field="line.name"/></td>
+                                        <td class="text-center"><span t-field="line.debit"/></td>
+                                        <td t-if="otherCurrency"/>
+                                        <td class="text-center"><span t-field="line.credit"/></td>
+                                    </tr>
+                                    <!-- PAYMENTS/REVERSALS -->
+<!--                                    <tr t-foreach="inv._get_reconciled_invoices_partials()[0]" t-as="par">-->
+<!--                                        <t t-set="payment" t-value="par[2].move_id"/>-->
+<!--                                        <td><span t-field="payment.date"/></td>-->
+<!--                                        <td><span t-field="payment.name"/></td>-->
+<!--                                        <td><span t-field="payment.ref"/></td>-->
+<!--                                        <t t-set="amountPayment" t-value="-payment.amount_total"/>-->
+<!--                                        <t t-set="amountInvoice" t-value="-par[1]"/>-->
+<!--                                        <t t-set="currencyPayment" t-value="payment.currency_id"/>-->
+<!--                                        <t t-set="currencyInvoice" t-value="inv.currency_id"/>-->
+<!--                                        &lt;!&ndash; Fill the column "Amount In Currency" only if necessary &ndash;&gt;-->
+<!--                                        <td t-if="otherCurrency" class="text-end"><span t-if="currencyPayment != currencyInvoice" t-esc="amountPayment" t-options="{'widget': 'monetary', 'display_currency': currencyPayment}"/></td>-->
+<!--                                        <td class="text-end"><span t-esc="amountInvoice" t-options="{'widget': 'monetary', 'display_currency': currencyInvoice}"/></td>-->
+<!--                                    </tr>-->
+<!--                                    &lt;!&ndash; BALANCE &ndash;&gt;-->
+<!--                                    <tr>-->
+<!--                                        <td/>-->
+<!--                                        <td><strong>Due Amount for <span t-field="inv.name"/></strong></td>-->
+<!--                                        <td/>-->
+<!--                                        <td t-if="otherCurrency"/>-->
+<!--                                        <td class="text-end"><strong><span t-field="inv.amount_residual"/></strong></td>-->
+<!--                                    </tr>-->
+<!--                                </t>-->
+                            </t>
+<!--                        </t>-->
+                    </tbody>
+                </table>
+                <br/>
+<!--                <div id="total" class="row justify-content-end">-->
+<!--                    <div class="col-4">-->
+<!--                        <table class="table table-sm table-borderless">-->
+<!--                            <tr class="is-subtotal text-end">-->
+<!--                                <td colspan="99" id="subtotal">-->
+<!--                                    <strong class="mr16">Subtotal</strong>-->
+<!--                                </td>-->
+<!--                                <td>-->
+<!--                                    <span-->
+<!--                                        t-field="o.reconciled_bill_ids.amount_untaxed"-->
+<!--                                        t-options='{"widget": "monetary", "display_currency": o.currency_id}'-->
+<!--                                    />-->
+<!--                                </td>-->
+<!--                            </tr>-->
+<!--                            <tr class="is-subtotal text-end">-->
+<!--                                <td colspan="99" id="subtotal">-->
+<!--                                    <strong class="mr16">Tax</strong>-->
+<!--                                </td>-->
+<!--                                <td>-->
+<!--                                    <span-->
+<!--                                        t-field="o.reconciled_bill_ids.amount_tax"-->
+<!--                                        t-options='{"widget": "monetary", "display_currency": o.currency_id}'-->
+<!--                                    />-->
+<!--                                </td>-->
+<!--                            </tr>-->
+<!--                            <tr class="is-subtotal text-end">-->
+<!--                                <td colspan="99" id="subtotal">-->
+<!--                                    <strong class="mr16">Total</strong>-->
+<!--                                </td>-->
+<!--                                <td>-->
+<!--                                    <span-->
+<!--                                        t-field="o.reconciled_bill_ids.amount_total"-->
+<!--                                        t-options='{"widget": "monetary", "display_currency": o.currency_id}'-->
+<!--                                    />-->
+<!--                                </td>-->
+<!--                            </tr>-->
+<!--                            <tr class="is-subtotal text-end">-->
+<!--                                <td colspan="99" id="subtotal">-->
+<!--                                    <strong class="mr16">Total Due</strong>-->
+<!--                                </td>-->
+<!--                                <td>-->
+<!--                                    <span-->
+<!--                                        t-field="o.reconciled_bill_ids.amount_residual"-->
+<!--                                        t-options='{"widget": "monetary", "display_currency": o.currency_id}'-->
+<!--                                    />-->
+<!--                                </td>-->
+<!--                            </tr>-->
+<!--                        </table>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="clearfix mb-10" style="padding-left:500px;">-->
+<!--                        <div id="total" class="row">-->
+<!--&lt;!&ndash;                            <div>&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;                                                    <p class="mb16">&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <t t-if="o.e_waybill">&ndash;&gt;-->
+<!--&lt;!&ndash;                                         <strong>E-Way Bill No.</strong>&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <span t-field="o.e_waybill"/>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </t>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <br></br>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <t t-if="o.vehicle_number">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <strong>Vehicle No.:</strong>&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <span t-field="o.vehicle_number"/>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </t>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <br></br>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <t t-if="o.vehicle_driver_name">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <strong>Vehicle Driver Name :</strong>&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <span t-field="o.vehicle_driver_name"/>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </t>&ndash;&gt;-->
+<!--&lt;!&ndash;&lt;!&ndash;                                </p>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                            </div>&ndash;&gt;-->
+<!--                            <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-6 col-md-7'} ml-auto">-->
+<!--                                <table class="table table-sm table-borderless" style="page-break-inside: avoid;">-->
+<!--                                    <tr class="o_subtotal" style="">-->
+<!--                                        <tr class="border-black o_subtotal">-->
+<!--                                            <td><strong>Subtotal</strong></td>-->
+
+<!--                                            <td class="text-end">-->
+<!--                                                <span-->
+<!--                                                    t-field="o.reconciled_bill_ids.amount_untaxed"-->
+<!--                                            t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>-->
+<!--                                            </td>-->
+<!--                                        </tr>-->
+<!--                                        <tr class="border-black o_subtotal">-->
+<!--                                            <td><strong>Tax</strong></td>-->
+
+<!--                                            <td class="text-end">-->
+<!--                                                <span-->
+<!--                                                    t-field="o.reconciled_bill_ids.amount_tax"-->
+<!--                                            t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>-->
+<!--                                            </td>-->
+<!--                                        </tr>-->
+<!--                                        <tr class="border-black o_subtotal">-->
+<!--                                            <td><strong>Total</strong></td>-->
+
+<!--                                            <td class="text-end">-->
+<!--                                                <span-->
+<!--                                                    t-field="o.reconciled_bill_ids.amount_total"-->
+<!--                                            t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>-->
+<!--                                            </td>-->
+<!--                                        </tr>-->
+<!--                                        <tr class="border-black o_subtotal">-->
+<!--                                            <td><strong>Total Due</strong></td>-->
+
+<!--                                            <td class="text-end">-->
+<!--                                                <span-->
+<!--                                                    t-field="o.reconciled_bill_ids.amount_residual"-->
+<!--                                            t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>-->
+<!--                                            </td>-->
+<!--                                        </tr>-->
+<!--                                    </tr>-->
+<!--&lt;!&ndash;                                        <td class="text-right"><strong>Subtotal</strong></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <td class="text-right">&ndash;&gt;-->
+<!--&lt;!&ndash;                                            <span t-field="o.reconciled_bill_ids.amount_untaxed"&ndash;&gt;-->
+<!--&lt;!&ndash;                                            t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>&ndash;&gt;-->
+<!--&lt;!&ndash;                                        </td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <br/>&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <td class="text-right"><strong>Tax</strong></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <td class="text-right">&ndash;&gt;-->
+<!--&lt;!&ndash;                                            <span t-field="o.reconciled_bill_ids.amount_tax"&ndash;&gt;-->
+<!--&lt;!&ndash;                                            t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>&ndash;&gt;-->
+<!--&lt;!&ndash;                                        </td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <br/>&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <td class="text-right"><strong>Total</strong></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <td class="text-right">&ndash;&gt;-->
+<!--&lt;!&ndash;                                            <span t-field="o.reconciled_bill_ids.amount_total"&ndash;&gt;-->
+<!--&lt;!&ndash;                                            t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>&ndash;&gt;-->
+<!--&lt;!&ndash;                                        </td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <br/>&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <td class="text-right"><strong>Total Due</strong></td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <td class="text-right">&ndash;&gt;-->
+<!--&lt;!&ndash;                                            <span t-field="o.reconciled_bill_ids.amount_residual"&ndash;&gt;-->
+<!--&lt;!&ndash;                                            t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>&ndash;&gt;-->
+<!--&lt;!&ndash;                                        </td>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </tr>&ndash;&gt;-->
+<!--                                </table>-->
+<!--                                <br/>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                </div>-->
+<!--                <p>Memo : <span t-field="o.ref"/></p>-->
+<!--                <div style="padding-left: 725px;">-->
+<!--                    <td class="text-end" colspan="99">-->
+<!--                            <strong class="mr16">Signature: </strong>-->
+
+<!--                    </td>-->
+<!--                </div>-->
+
+<!--                <t>-->
+<!--                    <tr class="is-subtotal text-end">-->
+<!--                        <td class="text-center" colspan="99" id="subtotal">-->
+<!--                            <strong class="mr16">Subtotal</strong>-->
+<!--                            <span-->
+<!--                                t-esc="o.reconciled_bill_ids.amount_untaxed"-->
+<!--                                t-options='{"widget": "monetary", "display_currency": o.currency_id}'-->
+<!--                            />-->
+<!--                        </td>-->
+<!--                        <br/>-->
+<!--                        <td class="text-center" colspan="99" id="subtotal">-->
+<!--                            <strong class="mr16">Tax</strong>-->
+<!--                            <span-->
+<!--                                t-esc="o.reconciled_bill_ids.amount_untaxed"-->
+<!--                                t-options='{"widget": "monetary", "display_currency": o.currency_id}'-->
+<!--                            />-->
+<!--                        </td>-->
+<!--                        <br/>-->
+<!--                        <td class="text-center" colspan="99" id="subtotal">-->
+<!--                            <strong class="mr16">Total</strong>-->
+<!--                            <span-->
+<!--                                t-esc="o.reconciled_bill_ids.amount_untaxed"-->
+<!--                                t-options='{"widget": "monetary", "display_currency": o.currency_id}'-->
+<!--                            />-->
+<!--                        </td>-->
+<!--                        <br/>-->
+<!--                        <td class="text-center" colspan="99" id="subtotal">-->
+<!--                            <strong class="mr16">Total Due</strong>-->
+<!--                            <span-->
+<!--                                t-esc="o.reconciled_bill_ids.amount_untaxed"-->
+<!--                                t-options='{"widget": "monetary", "display_currency": o.currency_id}'-->
+<!--                            />-->
+<!--                        </td>-->
+<!--                    </tr>-->
+<!--                </t>-->
+                <p>Memo : <span t-field="o.ref"/></p>
+                <p><strong>Prepared By: <span t-field="o.prepared_by"/> </strong></p>
+                <p><strong>Checked By: <span t-field="o.checked_by"/> </strong></p>
+                <p><strong>Approved By: <span t-field="o.approved_by"/> </strong></p>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_payment_receipt_customer_document">
+        <t t-call="web.external_layout">
+            <t t-set="o" t-value="o.with_context(lang=lang)"/>
+            <div class="page">
+                <div class="text-center" t-attf-style="display: -webkit-box; -webkit-box-pack: center; -webkit-box-orient: vertical;">
+                    <h2>Acknowledgement Receipt</h2>
+                    <p>Received from <u><span t-field="o.partner_id.name"/></u> with business address at<br/>
+                    <u><span t-field="o.partner_id.street"/>, <span t-field="o.partner_id.street2"/>, <span t-field="o.partner_id.city"/></u> the sum of <br/>
+                    <u><span t-esc="o.currency_id.amount_to_text(o.amount)"/> (  <span
+                                                    t-field="o.amount"
+                                            t-options='{"widget": "monetary", "display_currency": o.currency_id}'/> )</u> in partial/full payment<br/>
+                        for <u><span t-field="o.reconciled_invoice_ids.billing_id.name"/>.</u>
+                    </p>
+                    <p style="padding-left:500px;">
+                        Received By:<u>                   </u>
+                    </p>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="account.report_payment_receipt">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                 <t t-if="o.partner_type == 'supplier'">
+                     <t t-set="lang" t-value="o.partner_id.lang or o.company_id.partner_id.lang"/>
+                     <t t-call="project_custom.report_payment_receipt_supplier_document" t-lang="lang"/>
+                 </t>
+                <t t-if="o.partner_type != 'supplier'">
+                     <t t-set="lang" t-value="o.partner_id.lang or o.company_id.partner_id.lang"/>
+                     <t t-call="project_custom.report_payment_receipt_customer_document" t-lang="lang"/>
+                 </t>
+            </t>
+        </t>
+    </template>
+</odoo>

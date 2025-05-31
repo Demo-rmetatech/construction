@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="inherit_account_move_form_view" model="ir.ui.view">
+        <field name="name">inherit.account.move.form.view</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='action_register_payment']" position="replace">
+                <button name="action_register_payment" id="account_invoice_payment_btn"
+                                type="object" class="oe_highlight"
+                                invisible="is_approved or state != 'posted' or payment_state not in ('not_paid', 'partial') or move_type not in ('out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'out_receipt', 'in_receipt')"
+                                context="{'dont_redirect_to_payments': True}"
+                                string="Register Payment" data-hotkey="g"
+                                groups="account.group_account_invoice"/>
+            </xpath>
+            <xpath expr="//form//field[@name='journal_id']" position="attributes">
+                <attribute name="readonly">0</attribute>
+            </xpath>
+
+            <xpath expr="//header" position="inside">
+
+                <field name="is_approved" invisible="1"/>
+                <button name="request_approval" id="account_invoice_payment_btn"
+                                type="object" class="oe_highlight"
+                                invisible="not is_approved or state == 'draft' or payment_state in ('waiting_approval')"
+                                string="Request Payment Approval"
+                                groups="account.group_account_invoice"/>
+                <button name="approval"
+                                type="object" class="oe_highlight"
+                                invisible="payment_state != 'waiting_approval'"
+                                string="Approve Payment"
+                                groups="base.group_system"/>
+                <button name="reject"
+                                type="object" class="oe_highlight"
+                                invisible="payment_state != 'waiting_approval'"
+                                string="Reject Payment"
+                                groups="base.group_system"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="account.action_account_payments_payable" model="ir.actions.act_window">
+            <field name="name">Payments</field>
+            <field name="res_model">account.payment</field>
+            <field name="view_mode">tree,kanban,form,graph</field>
+            <field name="context">{
+                'default_payment_type': 'outbound',
+                'default_partner_type': 'supplier',
+                'search_default_outbound_filter': 1,
+                'default_move_journal_types': ('bank', 'cash'),
+                'default_approval_status': 'draft',
+            }</field>
+            <field name="view_id" ref="account.view_account_supplier_payment_tree"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                  Register a payment
+                </p><p>
+                  Payments are used to register liquidity movements. You can process those payments by your own means or by using installed facilities.
+                </p>
+            </field>
+        </record>
+
+
+    <record id="billing_statement_tree_view" model="ir.ui.view">
+        <field name="name">billing.statement.tree.view</field>
+        <field name="model">billing.statement</field>
+        <field name="arch" type="xml">
+            <tree create="False">
+                <field name="date" readonly="1"/>
+                <field name="name" readonly="1"/>
+                <field name="partner_id" readonly="1"/>
+                <field name="name" readonly="1"/>
+                <field name="project_id" readonly="1"/>
+                <field name="boq_id" readonly="1"/>
+                <field name="billing_statement_percentage" readonly="1" sum=" "/>
+<!--                <field name="untaxed_total_amount" readonly="1"/>-->
+<!--                <field name="taxes_amount" readonly="1"/>-->
+                <field name="taxed_total_amount" readonly="1" sum=" "/>
+                <field readonly="1" name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="billing_statement_form_view" model="ir.ui.view">
+        <field name="name">billing.statement.form.view</field>
+        <field name="model">billing.statement</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                     <button name="confirm" class="oe_highlight"
+                            string="Confirm" invisible="state == 'cancel' or state == 'confirm'"
+                            type="object"/>
+                     <button name="cancel" class="oe_highlight"
+                            string="Cancel"
+                            type="object" invisible="state == 'cancel' or state == 'confirm'"/>
+                    <button name="create_invoice" class="oe_highlight"
+                            string="Create Invoice"
+                            type="object" invisible="invoice_count != 0 or state == 'cancel' or state != 'confirm'"/>
+<!--                    <button name="billing_report_excel" class="oe_highlight"-->
+<!--                            string="Print Progress Report"-->
+<!--			                invisible="state == 'cancel' or state != 'confirm'"-->
+<!--                            type="object" />                    -->
+                    <field name="state" widget='statusbar'
+                           statusbar_visible=' '/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object"
+                                name="action_invoice"
+                                icon="fa-book"
+                                >
+                            <field string="Invoice"
+                                   name="invoice_count" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name" readonly="1"/>
+                            <field name="partner_id" readonly="1"/>
+                            <field name="project_id" readonly="1"/>
+                            <field name="boq_id" readonly="1"/>
+                            <field readonly="1" name="contract_id"/>
+                            <field name="is_retention_billing" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="date"/>
+                            <field name="total_project_completion" readonly="1"/>
+                            <field name="billing_statement_percentage" readonly="1"/>
+                            <field name="total_contract_price" readonly="1"/>
+                            <field name="total_billing_amount" readonly="1"/>
+                            <field name="downpayment_amount_adjusted" readonly="1"/>
+                            <field name="retention_amount_adjusted" readonly="1"/>
+                        </group>
+                        <notebook>
+                            <page string="Billing Statement Line">
+                                <field name="billing_statement_line" widget="one2many">
+                                    <tree editable="bottom">
+                                        <field name="billing_id" column_invisible="1"/>
+                                        <field name="date"/>
+                                        <field name="product_id"/>
+                                        <field name="description"/>
+                                        <field name="reference"/>
+                                        <field name="total_amount_due"/>
+                                    </tree>
+                                </field>
+                                 <group class="oe_subtotal_footer oe_right">
+<!--                                    <field name="untaxed_total_amount" force_save="1"/>-->
+<!--                                    <field name="taxes_amount" force_save="1"/>-->
+                                    <field name="taxed_total_amount" force_save="1"/>
+                            </group>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="inherit_account_payment_form_view" model="ir.ui.view">
+        <field name="name">inherit.account.payment.form.view</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='action_post']" position="replace">
+                <button name="action_post" string="Confirm" type="object" class="oe_highlight"
+                                invisible="is_waiting_approval or state in ['posted', 'cancel'] or approval_status == 'draft'"
+                                data-hotkey="v"/>
+            </xpath>
+            <xpath expr="//sheet//div[@class='oe_button_box']" position="after">
+                <widget name="web_ribbon" title="To be Approved"  bg_color="bg-warning" invisible="not is_waiting_approval"/>
+            </xpath>
+            <xpath expr="//header/button[@name='action_cancel']" position="replace">
+                <button name="action_cancel" string="Cancel" type="object"
+                        invisible="approval_status == 'waiting_approval' or state != 'draft'"
+                                 data-hotkey="z"/>
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <field name="approval_status" invisible="1"/>
+                <field name="is_waiting_approval" invisible="1"/>
+                <button name="request_approval" id="account_invoice_payment_btn"
+                                type="object" class="oe_highlight"
+                                invisible="approval_status != 'draft' or payment_type != 'outbound'"
+                                string="Request Payment Approval"
+                                />
+                <button name="approval"
+                                type="object" class="oe_highlight"
+                                invisible="not is_waiting_approval"
+                                string="Approve Payment"
+                                groups="base.group_system"/>
+                <button name="reject"
+                                type="object" class="oe_highlight"
+                                invisible="not is_waiting_approval"
+                                string="Reject Payment"
+                                groups="base.group_system"/>
+            </xpath>
+            <xpath expr="//field[@name='partner_bank_id']" position="after">
+                <field name="project_id"/>
+                <field name="prepared_by"/>
+                <field name="checked_by"/>
+                <field name="approved_by"/>
+                <field name="create_uid"/>
+                <field name="new_payment_id" invisible="state != 'cancel'"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="inherit_account_payment_search_view" model="ir.ui.view">
+        <field name="name">inherit.account.payment.search</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search//filter[@name='transfers_filter']" position="after">
+                <filter string="Pending Transfers" name="is_waiting_approval" domain="[('is_waiting_approval', '=', '1')]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_billing_statement" model="ir.actions.act_window">
+        <field name="name">Billing Statement</field>
+        <field name="res_model">billing.statement</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+     <menuitem id="menu_billing_statement" name="Billing Statement"
+              parent="project_custom.main_menu_project_boq" sequence="20"
+              action="action_billing_statement"/>
+</odoo>

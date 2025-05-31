@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="set_project_form_view" model="ir.ui.view">
+        <field name="name">set.stage.form.view</field>
+        <field name="model">project.stage.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="type" required="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Structural BOQ" invisible="type != 'struct'">
+                            <field name="po_line_ids"
+                                   widget="section_and_note_one2many">
+                                <tree editable="bottom"
+                                >
+                                    <field name="display_type" column_invisible="1"/>
+                                     <control>
+                                        <create name="add_product_control" string="Add a product"/>
+                                        <create name="add_section_control" string="Add a section" context="{'default_display_type': 'line_section'}"/>
+                                        <create name="add_note_control" string="Add a note" context="{'default_display_type': 'line_note'}"/>
+                                    </control>
+<!--                                    <field name="is_sub_task" invisible="1"/>-->
+                                    <field name="boq_id" column_invisible="1"/>
+                                    <field name="name"/>
+                                    <field name="product_id"/>
+                                    <field name="qc_id" column_invisible="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Architectural BOQ" invisible="type != 'archi'">
+                            <field name="arch_line_ids"
+                                   widget="section_and_note_one2many">
+                                <tree editable="bottom"
+                                >
+                                    <field name="display_type" column_invisible="1"/>
+                                     <control>
+                                        <create name="add_product_control" string="Add a product"/>
+                                        <create name="add_section_control" string="Add a section" context="{'default_display_type': 'line_section'}"/>
+                                        <create name="add_note_control" string="Add a note" context="{'default_display_type': 'line_note'}"/>
+                                    </control>
+<!--                                    <field name="is_sub_task" invisible="1"/>-->
+                                    <field name="boq_id" column_invisible="1"/>
+                                    <field name="name"/>
+                                    <field name="product_id"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Task Sequence" invisible="type != 'struct'">
+                            <field name="task_line_ids"
+                                   widget="section_and_note_one2many">
+                                <tree
+                                >
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="display_type" column_invisible="1"/>
+                                    <field name="boq_id" column_invisible="1"/>
+                                    <field name="name"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Task Sequence" invisible="type != 'archi'">
+                            <field name="arch_task_line_ids"
+                                   widget="section_and_note_one2many">
+                                <tree
+                                >
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="display_type" column_invisible="1"/>
+                                    <field name="boq_id" column_invisible="1"/>
+                                    <field name="name"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                    <footer>
+                        <button name="create_draft_boq" string="Create BOQ" type="object" default_focus="1" class="oe_highlight"/>
+                        <button name="update_boq" string="Update BOQ" type="object" default_focus="1" class="oe_highlight"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_set_stage_wizard" model="ir.actions.act_window">
+        <field name="name">Set Stage Wizard</field>
+        <field name="res_model">project.stage.wizard</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="set_project_form_view"/>
+        <field name="target">new</field>
+    </record>
+
+<!--    <menuitem id="menu_project_boq" name="BOQ"-->
+<!--              parent="project.menu_main_pm" sequence="40"-->
+<!--              action="action_project_boq"/>-->
+</odoo>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_billing_stmnt" model="ir.actions.report">
+       <field name="name">Billing Statement</field>
+       <field name="model">billing.statement</field>
+       <field name="report_type">qweb-pdf</field>
+       <field name="report_name">project_custom.report_billing_statement</field>
+       <field name="report_file">project_custom.report_billing_statement</field>
+       <field name="binding_model_id" ref="project_custom.model_billing_statement"/>
+       <field name="binding_type">report</field>
+    </record>
+
+</odoo>

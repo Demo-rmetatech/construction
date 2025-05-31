@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="inherit_sale_order_form_view" model="ir.ui.view">
+        <field name="name">inherit.sale.order.form.view</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="project_id" readonly="0"/>
+                <field name="boq_id" readonly="1"/>
+                <field name="total_amount_due" invisible="1"/>
+            </xpath>
+<!--            <xpath expr="//sheet/div[@name='button_box']/button[@name='action_view_task']" position="attributes">-->
+<!--                <attribute name="invisible">1</attribute>-->
+<!--            </xpath>-->
+            <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="down_payment_percentage"/>
+                <field name="retention_percentage"/>
+                <field name="down_payment_amount" readonly="1"/>
+                <field name="retention_amount" readonly="1"/>
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button class="oe_stat_button" type="object"
+                                name="action_boq_invoice"
+                                icon="fa-book"
+                                string="Contract Invoices"
+                                invisible="invoice_boq_count == 0"
+                                >
+                            <field string="Contract Invoices"
+                                   name="invoice_boq_count" widget="statinfo" />
+                        </button>
+            </xpath>
+            <xpath expr="//header/button[@id='create_invoice']" position="attributes">
+                <attribute name="invisible">boq_id</attribute>
+            </xpath>
+            <xpath expr="//notebook/page[@name='order_lines']" position="before">
+                <page string="Billing Details">
+                    <field name="billing_line" widget="one2many">
+                        <tree>
+                            <field name="order_id" column_invisible="1"/>
+                            <field name="product_id"/>
+                            <field name="billing_percent"/>
+                            <field name="subtotal_amount"/>
+                        </tree>
+                    </field>
+                    <group>
+                        <group class="oe_subtotal_footer oe_right">
+                            <field name="actual_amount_due" force_save="1"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+            <xpath expr="//header/field[@name='state']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

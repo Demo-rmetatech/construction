@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="boq_tree_view" model="ir.ui.view">
+        <field name="name">boq.tree.view</field>
+        <field name="model">project.boq</field>
+        <field name="arch" type="xml">
+            <tree default_order="id desc">
+                <field name="name" readonly="1"/>
+                <field name="project_id"/>
+                <field name="partner_id"/>
+                <field name="date"/>
+                <field name="total_cost"/>
+                <field name="vat"/>
+                <field name="final_total"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="boq_form_view" model="ir.ui.view">
+        <field name="name">boq.form.view</field>
+        <field name="model">project.boq</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                     <button name="compute_boq" class="oe_highlight"
+                            string="Compute BOQ"
+                            type="object" invisible="state != 'draft'"
+                            />
+                    <button name="approve" class="oe_highlight"
+                            string="Approve" type="object" invisible="state != 'draft'"
+                            />
+                    <button name="create_po" class="oe_highlight"
+                            string="Create Requisition" invisible="not is_contract_created or state == 'revised' or state == 'revise' or state == 'completed'"
+                            type="object" />
+                    <button name="billing_stmnt_wizard" class="oe_highlight"
+                            string="Create Billing Statement" invisible="not is_contract_created or state == 'revise' or state == 'revised' or state == 'completed'"
+                            type="object"/>
+                    <button name="create_contract_so" class="oe_highlight"
+                            string="Create Contract" invisible="is_contract_created or state != 'project' or total_contract != 0 or state == 'revise' or state == 'completed' or state == 'revised' or not project_id"
+                            type="object"/>
+                    <button name="open_create_project" class="oe_highlight"
+                            string="Create Project" invisible="state != 'approved' or project_id"
+                            type="object"/>
+                    <button name="set_completion_percent" class="oe_highlight"
+                            string="Set Completion %" invisible="state != 'contract' or is_set_percent"
+                            type="object"/>
+                    <button name="boq_completed" class="oe_highlight"
+                            string="Completed"
+                            type="object"  invisible="not is_contract_created or total_contract == 0 or state == 'revise' or state == 'completed' or state == 'revised'"/>
+                    <button name="cancel" class="oe_highlight"
+                            string="Revise" invisible="state == 'revise' or state == 'revised' or state == 'contract' or state == 'approved' or state == 'completed'"
+                            type="object"/>
+		 <button name="boq_report_excel" class="oe_highlight"
+                    string="Print BOQ"
+                    type="object"/>
+                    <button name="billing_report_excel" class="oe_highlight"
+                            string="Print Progress Report"
+			                invisible="state != 'contract'"
+                            type="object" />
+		<button name="revised" class="oe_highlight"
+                            string="Revised"
+                            type="object" invisible="state != 'revise'"/>
+                    <field name="state" widget='statusbar'
+                           statusbar_visible='draft,approved,project,contract,completed'/>
+                    <field name="is_contract_created" invisible="1"/>
+                    <field name="is_set_percent" invisible="1"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object"
+                                invisible="not n_count_total_qc"
+                                name="get_qty_computation"
+                                icon="fa-calculator"
+                                >
+                            <field string="Quantity Computation"
+                                   name="n_count_total_qc" widget="statinfo"/>
+                        </button>
+                        <button class="oe_stat_button" type="object"
+                                name="get_purchase_requisition"
+                                icon="fa-book"
+                                >
+                            <field string="Purchase Requisition"
+                                   name="requisition_count" widget="statinfo"/>
+                        </button>
+                        <button class="oe_stat_button" type="object"
+                                name="action_contract"
+                                icon="fa-book"
+                                >
+                            <field string="Contract"
+                                   name="total_contract" widget="statinfo"/>
+                        </button>
+                        <button class="oe_stat_button" type="object"
+                                name="action_billing_statement"
+                                icon="fa-book"
+                                >
+                            <field string="Billing Statements"
+                                   name="billing_stmnt_count" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group col='3'>
+                        <group>
+                            <field name="project_id" options="{'no_create': True}"/>
+                            <field name="location" invisible="1"/>
+                            <field name="project_description"/>
+                            <field name="partner_id" options="{'no_create': True}" required="1"/>
+                            <field name="date"/>
+                            <field name="subject"/>
+                            <field name="type_of_boq" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="n_labour_cost_percent"/>
+                            <field name="n_contingency_percent"/>
+                            <field name="n_over_head_profit"/>
+                            <field name="n_tax_id" options="{'no_create': True}"/>
+                            <field name="n_count_total_qc" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="actual_boq_completion"/>
+                            <field name="total_po_amount" readonly="1"/>
+                            <field name="actual_po_amount" readonly="1"/>
+                            <field name="total_billed_amount" readonly="1"/>
+                            <field name="project_completion_percent"/>
+                            <field name="billing_completion_percent" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="BOQ">
+                            <field name="boq_line_ids" class="one2many_padding"
+                                   widget="section_and_note_one2many">
+                                <tree editable="bottom"
+                                limit="1000"
+                                decoration-info="is_lower_cost == True"
+                                      decoration-warning="completion_percent &gt; 90"
+                                      decoration-success="completion_percent &gt; 0"
+                                decoration-danger="completion_percent &gt; 100">
+                                    <field name="is_lower_cost" column_invisible="1"/>
+                                    <field name="display_type" column_invisible="1"/>
+                                     <control>
+                                        <create name="add_product_control" string="Add a product"/>
+                                        <create name="add_section_control" string="Add a section" context="{'default_display_type': 'line_section'}"/>
+                                        <create name="add_note_control" string="Add a note" context="{'default_display_type': 'line_note'}"/>
+                                    </control>
+                                    <field name="is_sub_task" column_invisible="1"/>
+                                    <field name="boq_id" column_invisible="1"/>
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="create_po"/>
+                                    <field name="name"/>
+                                    <field name="product_id"  options="{'no_create': True}"/>
+                                    <field name="quantity"/>
+                                    <field name="ordered_qty" readonly="True"/>
+                                    <field name="completion_percent" widget="progressbar"/>
+                                    <field name="actual_completion_percent" force_save="1"/>
+                                    <field name="uom_id"  options="{'no_create': True}"/>
+                                    <field name="unit_price"/>
+                                    <button name="action_purchase_history" type="object" icon="fa-history" title="Purchase History" invisible="'id', '=', False"/>
+                                    <field name="material_total"/>
+                                    <field name="labour_unit_cost" column_invisible="1"/>
+                                    <field name="labour_unit_cost_extra" optional="hide"/>
+                                    <field name="labour_cost" optional="show"/>
+                                    <field name="sub_total" force_save="1" sum=" "/>
+                                    <field name="difference_po_cost" optional="hide"/>
+                                    <field name="last_po_price" optional="hide"/>
+                                    <field name="previous_percent" optional="hide"/>
+                                    <field optional="hide" name="present_percent"/>
+                                    <field name="to_date_percent" optional="hide"/>
+                                    <field name="previous_amount" optional="hide" sum=" "/>
+                                    <field name="present_amount" optional="hide" sum=" "/>
+                                    <field optional="hide" name="to_date_amount" sum=" "/>
+                                </tree>
+                            </field>
+                            <group class="oe_subtotal_footer oe_right">
+                                    <field name="total_cost" force_save="1"/>
+                                    <field name="contingency" force_save="1"/>
+                                    <field name="over_head_profit" force_save="1"/>
+                                    <field name="vat" force_save="1"/>
+                                    <field name="final_total" force_save="1"/>
+                            </group>
+                        </page>
+                        <page string=" Architectural BOQ" invisible="1">
+                            <field name="arch_line_ids"
+                                   widget="section_and_note_one2many">
+                                <tree editable="bottom"
+                                decoration-danger="quantity == 0">
+                                    <field name="display_type" column_invisible="1"/>
+                                     <control>
+                                        <create name="add_product_control" string="Add a product"/>
+                                        <create name="add_section_control" string="Add a section" context="{'default_display_type': 'line_section'}"/>
+                                        <create name="add_note_control" string="Add a note" context="{'default_display_type': 'line_note'}"/>
+                                    </control>
+                                    <field name="is_sub_task" column_invisible="1"/>
+                                    <field name="boq_id" column_invisible="1"/>
+                                    <field name="name"/>
+                                    <field name="product_id"/>
+                                    <field name="quantity"/>
+                                    <field name="ordered_qty"/>
+                                    <field name="completion_percent" widget="progressbar"/>
+                                    <field name="uom_id"/>
+                                    <field name="unit_price"/>
+                                    <button name="action_purchase_history" type="object" icon="fa-history" title="Purchase History" invisible="'id', '=', False"/>
+                                    <field name="material_total"/>
+                                   <field name="labour_unit_cost" optional="hide"/>
+                                    <field name="labour_cost" optional="show"/>
+                                    <field name="sub_total" force_save="1"/>
+                                    <field name="create_po" column_invisible="1"/>
+                                    <field name="difference_po_cost" optional="hide"/>
+                                    <field name="last_po_price" optional="hide"/>
+                                </tree>
+                            </field>
+                            <group class="oe_subtotal_footer oe_right">
+                                    <field name="arch_total_cost" force_save="1"/>
+                                    <field name="arch_contingency" force_save="1"/>
+                                    <field name="arch_over_head_profit" force_save="1"/>
+                                    <field name="arch_vat" force_save="1"/>
+                                    <field name="arch_final_total" force_save="1"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_project_boq" model="ir.actions.act_window">
+        <field name="name">BOQ</field>
+        <field name="res_model">project.boq</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="main_menu_project_boq" name="BOQ"
+              parent="project.menu_main_pm" sequence="40"/>
+
+    <menuitem id="menu_project_boq" name="BOQ List"
+              parent="main_menu_project_boq" sequence="10"
+              action="action_project_boq"/>
+</odoo>

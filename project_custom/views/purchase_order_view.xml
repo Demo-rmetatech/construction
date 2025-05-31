@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="inherit_purchase_order_form_view" model="ir.ui.view">
+        <field name="name">inherit.purchase.order.form.view</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="project_id" readonly="0"/>
+                <field name="boq_id" readonly="1"/>
+            </xpath>
+            <xpath expr="//field[@name='fiscal_position_id']" position="after">
+                <field name="receipt_location_id" readonly="0"/>
+            </xpath>
+            <xpath expr="//group[1]" position="inside">
+                <label for="street"/>
+                <div class="o_address_format" style="width: 50%">
+                     <field name="street" placeholder="Street..." class="o_address_street" />
+                     <field name="street2" placeholder="Street 2..." class="o_address_street"/>
+                    <field name="city" placeholder="City" class="o_address_city"/>
+                    <field name="state_id" class="o_address_state" placeholder="State"/>
+                    <field name="zip" placeholder="ZIP" class="o_address_zip"/>
+                </div>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='product_qty']" position="before">
+                <field name="boq_line_id" column_invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='product_qty']" position="attributes">
+                <attribute name="column_readonly">boq_line_id</attribute>
+            </xpath>
+            <xpath expr="//field[@name='effective_date']" position="after">
+                <field name="prepared_id"/>
+                <field name="approved_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <menuitem action="purchase.purchase_rfq" id="purchase.menu_purchase_rfq"
+            parent="purchase.menu_procurement_management"
+            sequence="10"/>
+</odoo>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_billing_statement">
+       <t t-call="web.html_container">
+           <t t-foreach="docs" t-as="o">
+               <t t-call="web.external_layout">
+                   <div class="page">
+                       <div class="oe_structure"/>
+                        <h2>
+                            <span>Billing Statement</span>
+                        </h2>
+                       <div class="row mt64">
+                           <div class="col-6">
+                               <strong>Bill To:</strong>
+                                <address t-field="o.project_id.partner_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}' />
+                           </div>
+                           <div style="padding-left:100px;" class="col-6">
+                               <table class="table table-sm table-borderless">
+                                <tr style="">
+                                    <td class="text-right"><strong>Statement Date:</strong></td>
+                                    <td class="text-right">
+                                        <span t-field="o.date"/>
+                                    </td>
+                                </tr>
+                                   <tr style="">
+                                    <td class="text-right"><strong>Statement #:</strong></td>
+                                    <td class="text-right">
+                                        <span t-field="o.name"/>
+                                    </td>
+                                </tr>
+                                   <tr style="">
+                                    <td class="text-right"><strong>Contract Price:</strong></td>
+                                    <td class="text-right">
+                                        <span t-esc="round(o.total_contract_price, 2)"/>
+                                    </td>
+                                </tr>
+                                   <tr style="">
+                                    <td class="text-right"><strong>Down payment Amount:</strong></td>
+                                    <td class="text-right">
+                                        <span t-esc="round(o.downpayment_amount_adjusted, 2)"/>
+                                    </td>
+                                </tr>
+                                   <tr style="">
+                                    <td class="text-right"><strong>Retention Amount:</strong></td>
+                                    <td class="text-right">
+                                        <span t-esc="round(o.retention_amount_adjusted, 2)"/>
+                                    </td>
+                                </tr>
+                            </table>
+<!--                                <div>-->
+<!--                                    <strong>Statement Date: </strong> <span t-field="o.date"/>-->
+<!--                                </div>-->
+<!--                               <div>-->
+<!--                                    <strong>Statement #: </strong> <span t-field="o.name"/>-->
+<!--                                </div>-->
+<!--                               <strong>Remittance Details</strong>-->
+<!--                               <div>-->
+<!--                                    <strong>Contract Price: </strong> <span t-esc="round(o.total_contract_price, 2)"/>-->
+<!--                                </div>-->
+<!--                               <div>-->
+<!--                                    <strong>Down payment Amount: </strong> <span t-esc="round(o.downpayment_amount_adjusted, 2)"/>-->
+<!--                                </div>-->
+<!--                               <div>-->
+<!--                                    <strong>Retention Amount: </strong> <span t-esc="round(o.retention_amount_adjusted, 2)"/>-->
+<!--                                </div>-->
+                            </div>
+                   </div>
+                       <br/>
+                       <table class="table table-bordered o_main_table" style="border-color:#000000;">
+                            <thead>
+                                <tr>
+                                    <th class="text-center"><span>Date</span></th>
+                                    <th class="text-center"><span>Type</span></th>
+                                    <th class="text-center"><span>Description</span></th>
+                                    <th class="text-center"><span>Reference #</span></th>
+                                    <th class="text-center"><span>Total Amount Due</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.billing_statement_line" t-as="line">
+                                    <td class="text-center"><span t-field="line.date"/></td>
+                                    <td class="text-center"><span t-field="line.product_id.name"/></td>
+                                    <td class="text-center"><span t-field="line.description"/></td>
+                                    <td class="text-center"><span t-field="line.reference"/></td>
+                                    <td class="text-center"><span t-esc="round(line.total_amount_due, 2)"/></td>
+<!--                                    <td class="text-center"><span t-esc="o._get_invoice_payment_amount(inv)" t-options="{'widget': 'monetary', 'display_currency': inv.currency_id}"/></td>-->
+                                </tr>
+                            </tbody>
+                    </table>
+                       <div id="total" class="row justify-content-end">
+                        <div class="col-4">
+                            <table class="table table-sm table-bordered">
+                                <tr style="">
+                                    <td class="text-center"><strong>Total Amount Due</strong></td>
+                                    <td class="text-center">
+                                        <span t-field="o.taxed_total_amount"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                   </div>
+               </t>
+           </t>
+       </t>
+    </template>
+</odoo>
