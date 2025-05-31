@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+
+    <template id="report_bir_form_2307">
+        <!-- <t t-call="web.html_container"> -->
+        <t t-call="web.basic_layout">
+            <head>
+                <meta charset="UTF-8"/> 
+                <style>
+                    table{
+                        width:100%;
+                        border-collapse: collapse;
+                    }
+                    p{
+                        margin:0px;
+                    }
+                    .page div{
+                        border: 2px solid black;
+                        border-top:none;
+                    }
+                    .part{
+                        text-align:center;
+                        font-weight:bold;
+                        padding:3px;
+                    }
+                    .detail_income th, .detail_income td {
+                        border: 1px solid black;
+                        padding: 5px;
+                        text-align: center;
+                    }
+                </style>
+            </head>
+            <!-- <t t-foreach="docs" t-as="o"> -->
+                <div class="page" style="">
+
+
+                    
+                    <!-- Initialize "Money Payments Subject to Withholding of Business Tax" lines object -->
+                    <t t-set="business_tax_withholding_payment_lines" t-value="[]"/>
+                    
+                    <!-- Initialize First Quarter Total Amount (Business Tax Payment) -->
+                    <t t-set="month_1_business_tax_withholding_total" t-value="0.00"/>
+
+                    <!-- Initialize Second Quarter Total Amount (Business Tax Payment) -->
+                    <t t-set="month_2_business_tax_withholding_total" t-value="0.00"/>
+
+                    <!-- Initialize Third Quarter Total Amount (Business Tax Payment) -->
+                    <t t-set="month_3_business_tax_withholding_total" t-value="0.00"/>
+
+                    <!-- Initialize All Quarters Total Amount (Business Tax Payment) -->
+                    <t t-set="quarter_business_tax_withholding_total" t-value="0.00"/>
+
+                    <!-- Initialize Tax Withheld Total Amount for All Quarters (Business Tax Payment) -->
+                    <t t-set="quarterly_business_tax_withheld_total" t-value="0.00"/>
+
+                    <t t-set="payor_tax_agent_issue_date" t-value=""/>
+
+                   
+                    <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+                    <table class="table" style="margin-bottom:0px;">
+                            <tr style="height:60px;">
+                                <td style="width:33%; vertical-align: bottom;padding:0px;">
+                                    <p style="text-align:left; width:22%; background-color: gainsboro; float:left;">
+                                    For BIR Use Only
+                                    </p>
+                                    <p style="width:20%; float:left;padding-left:2px;">
+                                        BCS/ Item:
+                                    </p>
+                                </td>
+                                <td style="width:33%;padding:0px;">
+                                    <table>
+                                        <tr>
+                                            <td style="text-align:right;border:none;">
+                                                <img src="/account_bir_form/static/img/bir_logo.png" height="60" alt="Logo"/>
+                                                
+                                            </td>
+                                            <td>
+                                                <p style="font-weight:bold;text-align:center;">
+                                                Republic of the Philippines<br/>
+                                                Department of Finance<br/>
+                                                Bureau of Internal Revenue
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    </td>
+                                <td style="width:33%"></td>
+                            </tr>
+                        </table>
+                        <table style="border:2px solid black; border-collapse:collapse;">
+                            <tr style="text-align:center;">
+                                <td style="width:20%; border:2px solid black;"> BIR Form No. <h1>2307</h1> January 2018 (ENCS)</td>
+                                <td style="width:50%; border:2px solid black;"><h3>Certificate of Creditable Tax Withheld at Source</h3></td>
+                                <td style="width:30%; border:2px solid black;padding-top:13px;">
+                                    
+                                    <img src="/account_bir_form/static/img/bir_barcode.png" height="60" alt="Logo"/>
+                                    <p style="text-align:right;">2307 01/18ENCS</p>
+                                </td>
+                            </tr>
+                        </table>
+                        <div style="padding:3px;">Fill in all applicable spaces. Mark all appropriate boxes with an "X".</div>
+                        <table style="border:2px solid black; border-top:none; border-collapse:collapse;">
+                            <tr>
+                                <td style="border-top:none; padding: 3px 3px 3px 12px; width:19%;"> 1 For the Period </td>
+                                <td style="padding:3px; width: 43%;">
+                                    <table>
+                                        <tr>
+                                            <td style="width: 12%;">From</td>
+                                            <t t-foreach="from_date" t-as="i">
+                                                <td style="border:1px solid black; width: 6%; text-align:center; font-weight:bold;"><t t-out="i"/></td>
+                                            </t>
+                                            <td style="padding-left:10px; font-style: italic;">(MM/DD/YYYY)</td>
+
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td>
+                                    <table>
+                                        <tr>
+                                            <td style="width: 8%;">To</td>
+                                            <t t-foreach="to_date" t-as="i">
+                                                <td style="border:1px solid black;width: 7%; text-align:center; font-weight:bold;"><t t-out="i"/></td>
+                                            </t>
+                                            <td style="padding-left:10px; font-style: italic;">(MM/DD/YYYY)</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="part">Part I - Payee Information</div>
+                        <div>
+                            <table>
+                                <tr style="border-bottom:1px solid black;">
+                                    <td style="width:35%; padding: 3px 3px 3px 12px;">2 Taxpayer Identification Number (TIN)</td>
+                                    <td style="width:65%; padding:3px; text-align:left;" colspan='2'>
+                                        <table style="width:60%">
+                                            <tr>
+                                                <t t-foreach="payee_tin_no" t-as="i">
+                                                    <td style="border:1px solid black;width: 1%; text-align:center; font-weight:bold;"><t t-out="i"/></td>
+                                                </t>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    
+                                </tr>
+                                <tr>
+                                    <td colspan='3' style="padding: 3px 3px 3px 12px;">
+                                        <p>3 Payee's Name (Last Name, First Name, Middle Name for Individual OR Registered Name for Non-Individual)</p>
+                                        <div style="border:1px solid black; margin:7px 0px 0px 30px; padding:2px; padding-left:10px; font-weight:bold; "><t t-out="payee_name.upper()"/></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style=" width:85%; padding: 3px 3px 3px 12px;" colspan='2'>
+                                        <p>4 Registered Address</p>
+                                        <div style="border:1px solid black; margin:7px 0px 0px 30px; padding:2px; padding-left:10px; font-weight:bold; "><t t-out="payee_registered_address.upper()"/></div>
+                                    </td>
+                                    <td style="width:15%;">
+                                        <p><strong>4A </strong> ZIP Code</p>
+                                        <table style="margin:6px 0px 0px 0px;">
+                                            <tr>
+                                             <t t-if="payee_zip_code">
+                                                <t t-foreach="payee_zip_code" t-as="i">
+                                                    <td style="border:1px solid black; text-align:center; font-weight:bold;"><t t-out="i"/></td>
+                                                </t>
+                                            </t>
+                                            <t t-else="">
+                                                <t t-foreach="(1,2,3,4)" t-as="i">
+                                                    <td style="border:1px solid black; padding-top:14%; width:25%;"></td>
+                                                </t>
+                                            </t>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan='3' style="padding: 3px 3px 3px 12px;">
+                                        <p>5 Foreign Address, if applicable</p>
+                                        <div style="border:1px solid black; margin:7px 0px 0px 30px; padding:2px; padding-left:10px; font-weight:bold; min-height:25px;"><t t-out="payee_foreign_address.upper()"/></div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="part">Part II - Payor Information</div>
+                        <div>
+                            <table>
+                                <tr style="border-bottom:1px solid black;">
+                                    <td style="width:35%; padding: 3px 3px 3px 12px;">6 Taxpayer Identification Number (TIN) </td>
+                                    <td style="width:65%; padding:3px; text-align:left;" colspan='2'>
+                                        <table style="width:60%;">
+                                            <tr>
+                                                <t t-foreach="payor_tin_no" t-as="i">
+                                                    <td style="border:1px solid black;width: 1%; text-align:center; font-weight:bold; "><t t-out="i"/></td>
+                                                </t>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    
+                                </tr>
+                                <tr>
+                                    <td colspan='3' style="padding: 3px 3px 3px 12px;">
+                                        <p>7 Payor's Name (Last Name, First Name, Middle Name for Individual OR Registered Name for Non-Individual)</p>
+                                        <div style="border:1px solid black; margin:7px 0px 0px 30px; padding:2px; padding-left:10px; font-weight:bold; "><t t-out="payor_name.upper()"/></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style=" width:85%; padding: 3px 3px 3px 12px;" colspan='2'>
+                                        <p>8 Registered Address</p>
+                                        <div style="border:1px solid black; margin:7px 0px 0px 30px; padding:2px; padding-left:10px; font-weight:bold; "><t t-out="payor_registered_address.upper()"/></div>
+                                    </td>
+                                    <td style="width:15%;">
+                                        <p><strong>8A </strong> ZIP Code</p>
+                                        <table style="margin:6px 0px 0px 0px;">
+                                            <tr>
+                                            <t t-if="payor_zip_code">
+                                                <t t-foreach="payor_zip_code" t-as="i">
+                                                    <td style="border:1px solid black; text-align:center; font-weight:bold; "><t t-out="i"/></td>
+                                                </t>  
+                                            </t>
+                                            <t t-else="">
+                                                <t t-foreach="(1,2,3,4)" t-as="i">
+                                                    <td style="border:1px solid black; padding-top:14%; width:25%;"></td>
+                                                </t>
+                                            </t>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="part" style=" border-bottom:none;">Part III - Details of Monthly Income Payments and Taxes Withheld</div>
+                            
+                        <table class="detail_income" style="border: 2px solid black; border-bottom:1px solid black;">
+                            <tr>
+                                <th style="width: 22%;" rowspan="2">Income Payments Subject to Expanded Withholding Tax </th>
+                                <th style="width:7%;" rowspan="2">ATC</th>
+                                <th style="" colspan='4'>AMOUNT OF INCOME PAYMENTS</th>
+                                <th style="" rowspan="2">Tax Withheld for the Quarter</th>
+                            </tr>
+                            <tr>
+                                <th style="">1st Month of the Quarter</th>
+                                <th style="">2nd Month of the Quarter</th>
+                                <th style="">3rd Month of the Quarter</th>
+                                <th style="width:13%;">Total</th>
+                            </tr>
+                            <tr t-foreach="income_subject_to_expanded_withholding_lines.items()" t-as="line">
+                                <td style="font-size:13px;"><t t-out="line[1]['description']"/></td>
+                                <td><t t-out="line[0]"/></td>
+                                <td><t t-out="line[1]['month_1'] or '0.00'"/></td>
+                                <td><t t-out="line[1]['month_2'] or '0.00'"/></td>
+                                <td><t t-out="line[1]['month_3'] or '0.00'"/></td>
+                                <td><t t-out="line[1]['quarter_subtotal'] or '0.00'"/></td>
+                                <td><t t-out="line[1]['tax_withhold_total'] or '0.00'"/></td>
+                                
+                            </tr>
+                            <tr>
+                                <th>Total</th>
+                                <th></th>
+                                <th><t t-out="month_1_expanded_withholding_income_total or '0.00'"/></th>
+                                <th><t t-out="month_2_expanded_withholding_income_total or '0.00'"/></th>
+                                <th><t t-out="month_3_expanded_withholding_income_total or '0.00'"/></th>
+                                <th><t t-out="quarter_expanded_withholding_income_total or '0.00'"/></th>
+                                <th><t t-out="quarterly_tax_withheld_total or '0.00'"/></th>
+                            </tr>
+                            <tr>
+                                <th>Money Payments Subject to Withholding of Business Tax (Government &amp; Private)</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            <tr t-foreach="business_tax_withholding_payment_lines" t-as="line">
+                                <td></td> 
+                                <td></td> <!-- BIR 2307: ATC -->
+                                <td>0.00</td> <!-- BIR 2307: First Quarter Amount Withheld -->
+                                <td>0.00</td> <!-- BIR 2307: Second Quarter Amount Withheld -->
+                                <td>0.00</td> <!-- BIR 2307: Third Quarter Amount Withheld -->
+                                <td>0.00</td> <!-- BIR 2307: Total 1+2+3 Quarter Amount Withheld -->
+                                <td>0.00</td> <!-- BIR 2307: Total Amount Tax Withheld (All Quarters) -->
+                            </tr>
+                            <tr>
+                                <th>Total</th>
+                                <th></th>
+                                <th><t t-out="month_1_business_tax_withholding_total"/></th> <!-- BIR 2307: First Quarter Amount Withheld - Business Tax -->
+                                <th><t t-out="month_2_business_tax_withholding_total"/></th> <!-- BIR 2307: Second Quarter Amount Withheld - Business Tax -->
+                                <th><t t-out="month_3_business_tax_withholding_total"/></th> <!-- BIR 2307: Third Quarter Amount Withheld - Business Tax -->
+                                <th><t t-out="quarter_business_tax_withholding_total"/></th> <!-- BIR 2307: Total Amount Withheld (All Quarters) - Business Tax -->
+                                <th><t t-out="quarterly_business_tax_withheld_total"/></th> <!-- BIR 2307: Total Tax Withheld for All Quarters - Business Tax -->
+                            </tr>
+                            <tr>
+                                <td colspan='7' style="text-align:left; text-indent: 2em;">
+                                    We declare under the penalties of perjury that this certificate has been made in good faith, verified by us, and to the best of our knowledge and belief, is true and correct,
+                                pursuant to the provisions of the National Internal Revenue Code, as amended, and the regulations issued under authority thereof. Further, we give our consent to the
+                                processing of our information as contemplated under the *Data Privacy Act of 2012 (R.A. No. 10173) for legitimate and lawful purposes.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan='7'>
+                                    <p style="height:20px;font-weight: bold;"><t t-out="bir_payor_signatory_name"/></p>
+                                    <p style="border-top: 1px solid black; width: 50%; margin: 3px auto;"></p>
+                                    <p style="height:20px;font-weight: bold;"><t t-out="bir_payor_signatory_tin"/><t t-if="bir_payor_signatory_designation">/ <t t-out="bir_payor_signatory_designation"/></t></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan='7'>
+                                    <p>Signature over Printed Name of Payor/Payor's Authorized Representative/Tax Agent</p>
+                                    <p style="font-style:italic;">(Indicate Title/Designation and TIN)</p>
+                                </td>
+                            </tr>
+                        </table>
+                        <div>
+                            <table>
+                                <tr>
+                                    <td style="text-align:center; width:21%; font-size:13px;">Tax Agent Accreditation No./ Attorney's Roll No. (if applicable)</td>
+                                    <td style="vertical-align: middle; width:17%;">
+                                        <p t-if="payor_tax_agent_accreditation_no" style="border:1px solid black; padding:2px 1px 2px 3px;"><t t-out="payor_tax_agent_accreditation_no"/></p>
+                                        <p t-else="1" style="border:1px solid black; padding:25px 1px 2px 3px;"></p>
+                                    </td>
+                                    <td style="text-align:center;width: 11%; font-size:14px;">
+                                        <p>Date of Issue</p>
+                                        <p style="font-style:italic;">(MM/DD/YYYY)</p>
+                                    </td>
+                                    <td style="text-align:center; vertical-align: middle;width: 21%;">
+                                        <table>
+                                            <tr>
+                                                <t t-if="payor_tax_agent_issue_date" >
+                                                    <t t-foreach="payor_tax_agent_issue_date" t-as="i">
+                                                        <td style="border:1px solid black;width: 7%; text-align:center; font-weight:bold; padding:2px 0px 2px 0px;"><t t-out="i"/></td>
+                                                    </t>
+                                                </t>
+                                                <t t-else="1">
+                                                    <t t-foreach="[1,2,3,4,5,6,7,8]" t-as="i">
+                                                        <td style="border:1px solid black;width: 6%; text-align:center; font-weight:bold; padding:25px 0px 2px 0px;"></td>
+                                                    </t>
+                                                </t>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td style="text-align:center;width: 11%; font-size:14px;">
+                                        <p>Date of Expiry</p>
+                                        <p style="font-style:italic;">(MM/DD/YYYY)</p>
+                                    </td>
+                                    <td style="text-align:center;vertical-align: middle;width: 21%;">
+                                        <table>
+                                            <tr>
+                                                <t t-if="payor_tax_agent_expiry_date">
+                                                    <t t-foreach="payor_tax_agent_expiry_date" t-as="i">
+                                                        <td style="border:1px solid black;width: 7%; text-align:center; font-weight:bold; padding:2px 0px 2px 0px;"><t t-out="i"/></td>
+                                                    </t>
+                                                </t>
+                                                <t t-else="1">
+                                                    <t t-foreach="[1,2,3,4,5,6,7,8]" t-as="i">
+                                                        <td style="border:1px solid black;width: 6%; text-align:center; font-weight:bold; padding:25px 0px 2px 0px;"></td>
+                                                    </t>
+                                                </t>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="part">CONFORME:</div>
+                        <div>
+                            <table>
+                                <tr>
+                                    <td style="text-align:center; border-bottom:1px solid black;">
+                                        <br/>
+                                        <br/>
+                                        <br/>
+                                        <!-- <p style="height:20px;font-weight: bold;"><t t-out="payee_name.upper()"/></p>
+                                        <p style="border-top: 1px solid black; width: 50%; margin: 3px auto;"></p>
+                                        <p style="height:20px;font-weight: bold;"><t t-out="payee_tin_no"/><t t-if="payee_title_or_designation">/ <t t-out="payee_title_or_designation.upper()"/></t></p> -->
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:center; border-bottom:1px solid black;">
+                                        <p>Signature over Printed Name of Payor/Payor's Authorized Representative/Tax Agent</p>
+                                        <p style="font-style:italic;">(Indicate Title/Designation and TIN)</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <table>
+                                        <tr>
+                                            <td style="text-align:center; width:21%; font-size:13px;">Tax Agent Accreditation No./ Attorney's Roll No. (if applicable)</td>
+                                            <td style="vertical-align: middle; width:17%;">
+                                                <p t-if="payee_tax_agent_accreditation_no" style="border:1px solid black; padding:2px 1px 2px 3px;"><t t-out="payee_tax_agent_accreditation_no"/></p>
+                                                <p t-else="1" style="border:1px solid black; padding:25px 1px 2px 3px; height: 1%;"></p>
+                                            </td>
+                                            <td style="text-align:center;width: 11%; font-size:14px;">
+                                                <p>Date of Issue</p>
+                                                <p style="font-style:italic;">(MM/DD/YYYY)</p>
+                                            </td>
+                                            <td style="text-align:center;vertical-align: middle;width: 21%;">
+                                                <table>
+                                                    <tr>
+                                                        <t t-if="payee_tax_agent_issue_date">
+                                                            <t t-foreach="payee_tax_agent_issue_date" t-as="i">
+                                                                <td style="border:1px solid black;width: 7%; text-align:center; font-weight:bold;padding:2px 0px 2px 0px;"><t t-out="i"/></td>
+                                                            </t>
+                                                        </t>
+                                                        <t t-else="1">
+                                                            <t t-foreach="[1,2,3,4,5,6,7,8]" t-as="i">
+                                                                <td style="border:1px solid black;width: 6%; text-align:center; font-weight:bold; padding:25px 0px 2px 0px;"></td>
+                                                            </t>
+                                                        </t>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td style="text-align:center;width: 11%; font-size:14px;">
+                                                <p>Date of Expiry</p>
+                                                <p style="font-style:italic;">(MM/DD/YYYY)</p>
+                                            </td>
+                                            <td style="text-align:center;vertical-align: middle;width: 21%;">
+                                                <table>
+                                                    <tr>
+                                                        <t t-if="payee_tax_agent_expiry_date">
+                                                            <t t-foreach="payee_tax_agent_expiry_date" t-as="i">
+                                                                <td style="border:1px solid black;width: 7%; text-align:center; font-weight:bold; padding:2px 0px 2px 0px;"><t t-out="i"/></td>
+                                                            </t>
+                                                        </t>
+                                                        <t t-else="1">
+                                                            <t t-foreach="[1,2,3,4,5,6,7,8]" t-as="i">
+                                                                <td style="border:1px solid black;width: 6%; text-align:center; font-weight:bold; padding:25px 0px 2px 0px;"></td>
+                                                            </t>
+                                                        </t>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </tr>
+                            </table>
+                        </div>
+                        <p>*NOTE: The BIR Data Privacy is in the BIR website (www.bir.gov.ph)</p>
+                </div>
+                <p style="page-break-before:always;"/>
+        </t>
+    </template>
+
+    <record id="paperformat_bir_2307_form" model="report.paperformat">
+        <field name="name">BIR 2307 Paper Format</field>
+        <field name="format">A4</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">3</field>
+        <field name="margin_bottom">3</field>
+        <field name="margin_left">3</field>
+        <field name="margin_right">3</field>
+        <field name="disable_shrinking" eval="False"/>
+        <field name="dpi">100</field>
+    </record>
+    
+    <record id="action_report_bir_form_2307" model="ir.actions.report">
+        <field name="name">BIR Form 2307</field>
+        <field name="model">account.move</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">account_bir_form.report_bir_form_2307</field>
+        <field name="report_file">account_bir_form.report.bir_form_template</field>
+        <field name="paperformat_id" ref="account_bir_form.paperformat_bir_2307_form"/>
+        <field name="binding_type">report</field>
+    </record>
+    <record id="action_generate_bir_form" model="ir.actions.server">
+        <field name="name">BIR 2307 Form</field>
+        <field name="model_id" ref="account.model_account_move"/>
+        <field name="binding_model_id" ref="account.model_account_move" />
+        <field name="state">code</field>
+        <field name="code">
+            if records:
+                action = model.generate_bir_form(records)
+        </field>
+
+    </record>
+</odoo>

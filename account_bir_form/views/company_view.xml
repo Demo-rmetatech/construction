@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_res_company_bir_form" model="ir.ui.view">
+    <field name="name">res.company.bir.form</field>
+    <field name="model">res.company</field>
+    <field name="inherit_id" ref="base.view_company_form"/>
+    <field name="arch" type="xml">
+        <xpath expr="//notebook" position="inside">
+            <page string="BIR Information">
+                <group>
+                    <group>
+                        <span class="o_form_label o_td_label" name="address_name">
+                            Address (BIR)
+                        </span>
+                        <div class="o_address_format">
+                            <field name="bir_street" placeholder="Street..." class="o_address_street"/>
+                            <field name="bir_street2" placeholder="Street..." class="o_address_street"/>
+                            <field name="bir_city" placeholder="City" class="o_address_city"/>
+                            <field name="bir_state_id" class="o_address_state" placeholder="State"/>
+                            <field name="bir_zip_code" placeholder="ZIP" class="o_address_zip"/>
+                            <div name="entity_address_country" class="d-flex justify-content-between">
+                                <field name="bir_country_id" placeholder="Country" class="o_address_country" options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>
+                            </div>
+                        </div>
+                    </group>
+                    <group>
+                        <field name="bir_tin_no" placeholder="e.g. 000-000-000-000"/>
+                        <field name="bir_signatory" placeholder="Name | TIN | Designation"/>
+                    </group>
+                </group>
+            </page>
+        </xpath>
+    </field>
+</record>
+
+
+</odoo>
