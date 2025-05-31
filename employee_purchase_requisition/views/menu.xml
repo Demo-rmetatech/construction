@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <!-- Employee Purchase Requisition menu -->
+<!--    <menuitem id="purchase_requisition"-->
+<!--              name="Employee Purchase Requisition"-->
+<!--              web_icon="employee_purchase_requisition,static/description/icon.png"-->
+<!--              action="employee_purchase_requisition.purchase_requisition_details"/>-->
+    <menuitem id="purchase_requisition01"
+              name="Purchase Requisition"
+              parent="purchase.menu_procurement_management"
+              action="employee_purchase_requisition.purchase_requisition_details"/>
+</odoo>
